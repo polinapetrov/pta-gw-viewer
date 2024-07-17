@@ -126,7 +126,7 @@
             showCooGrid: false,
             showFullscreenControl: true
         });
-        var cat = A.catalogFromURL('./static/catalog_votable_v2.xml', {name:'NANOGrav galaxy catalog', sourceSize:10, color:'#0080ff', shape:'circle', filter: distFilterFunction});
+        var cat = A.catalogFromURL('./static/catalog_votable_v2.xml', {name:'NANOGrav galaxy catalog', sourceSize:10, color:'#0080ff', shape:'circle', filter: distFilterFunction, onClick:'showPopup'});
         aladin.addCatalog(cat);
     });    
 
@@ -174,11 +174,11 @@ logCatalogDetails();
 
     Galaxies with distances (Mpc) greater than:
     <input id='slider1' style='vertical-align:middle;width:10vw;' step='0.01' min='0.5' max='736.91' type='range' value='0'>
-    <span id='distVal'>0</span><br>
+    <span id='distVal'>0.5</span><br>
 
     Black Hole mass (log(Solar Mass)) greater than:
     <input id='slider2' style='vertical-align:middle;width:10vw;' step='0.01' min='1.5' max='10.32' type='range' value='0'>
-    <span id='bhmassVal'>0</span><br>
+    <span id='bhmassVal'>1.5</span><br>
 
 <script>
     document.querySelector('#upload-form').addEventListener('submit', function(event) {

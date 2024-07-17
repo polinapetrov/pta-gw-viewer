@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>NANOGrav Sky Localization Interactive Viewer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
+    <script type="text/javascript" src="/static/main.js"></script>
+    <!--
+    <script type="text/javascript" src="/static/style.js"></script>
+    -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladin.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladinliteX.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/alix_import.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladin.css" />
+    <link rel="stylesheet" href="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladinliteX.css" />
+    <link rel="stylesheet" href="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/alix_import.css" />
+</head>
+
+<body id="body">
+    <header role="banner">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container-fluid">
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contact">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/user_manual">User Manual</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+    <h1 class="display-5">NANOGrav Sky Localization Interactive Viewer</h1>
+    <div class="main-content">
+        
+        <div id='infoDiv'>&nbsp; </div>
+
+        <div id='aladin-lite-div' style='width: 700px; height: 600px;'></div>
+        <script type="text/javascript" src="https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladin.js" charset="utf-8"></script>
+        <script type='text/javascript' src='https://code.jquery.com/jquery-1.9.1.min.js' charset='utf-8'></script>        
+
+        <!--
+        <aside class="histogram">
+            <div class="dropdown">
+                <label for="data-type" class="dropdown-label">Data Type</label>
+                <select id="data-type" onchange="alert(this.value);">
+                    <option value="distance">Distance</option>
+                    <option value="mass">Masses of Stars</option>
+                    
+                </select>
+            </div>
+            <div id="histogram" style="width:600px;height:400px;"></div>
+            <script src="/static/uploadAndPlot.js"></script>
+        </aside>
+        -->
+    </div>
+    
+    <!--
+    <h3>Upload your VOTable file</h3>
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data" accept="xml">
+        <input type="file" name="datafile" required>
+        <input type="submit" value="Upload and Plot" onclick="uploadFile()">
+    </form>
+    <div id="loading" style="display:none;">Loading...</div>
+    -->
+</div>
+
+<script type="text/javascript">
+    var aladin;
+    var catalog = []; //To store parsed catalog data
+    A.init.then(() => {
+
+        // Lines below add a distance slider for the catalog 
+        var distThreshold = 0;
+        var slider1 = document.getElementById('slider1');
+        slider1.oninput = function() {
+            distThreshold = this.value;
+            $('#distVal').html(distThreshold);
+            cat.reportChange();
+        }
+
+        // Lines below add a BH mass slider for the catalog
+        var bhmassThreshold = 0;
+        var slider2 = document.getElementById('slider2');
+        slider2.oninput = function() {
+            bhmassThreshold = this.value;
+            $('#bhmassVal').html(bhmassThreshold);
+            cat.reportChange();
+        }       
+
+        var distFilterFunction = function(source) {
+            const gdist  = parseFloat(source.data['dist']);
+            const bhmassfbulge = parseFloat(source.data['BHMassfbulge1']);
+            return gdist > distThreshold && bhmassfbulge > bhmassThreshold;
+        }
+
+        // Main Aladin setup
+        aladin = A.aladin('#aladin-lite-div', {
+            cooFrame: "ICRSd", 
+            showSimbadPointerControl: false, 
+            showShareControl: false, 
+            survey: 'https://alasky.cds.unistra.fr/DSS/DSSColor/', 
+            fov: 360,
+            projection: "MOL", 
+            showContextMenu: true,
+            reticleColor: '#ffffff',
+            showCooGrid: false,
+            showFullscreenControl: true
+        });
+        var cat = A.catalogFromURL('./static/catalog_votable_v2.xml', {name:'NANOGrav galaxy catalog', sourceSize:10, color:'#0080ff', shape:'circle', filter: distFilterFunction});
+        aladin.addCatalog(cat);
+    });    
+
+    function logCatalogDetails() {
+    const catalogs = aladin.getCatalogs();
+    if (catalogs.length === 0) {
+        console.log('No catalogs loaded.');
+        return;
+    }
+
+    // Log details of each catalog
+    catalogs.forEach((catalog, index) => {
+        console.log(`Catalog ${index}:`, catalog);
+        console.log('Number of sources:', catalog.sources.length);
+        if (catalog.sources.length > 0) {
+            console.log('First source:', catalog.sources[0]);  // Display the first source as a sample
+        }
+    });
+}
+
+// Call this function at a relevant point in your code to inspect the catalog
+logCatalogDetails();
+
+    document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const file = document.getElementById('datafile').files[0];
+            formData.append('datafile', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+             .then(response => response.json())
+            .then(data => {
+                // Handle response data, e.g., update histogram
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+            });
+        });
+
+    
+</script>
+
+    Galaxies with distances (Mpc) greater than:
+    <input id='slider1' style='vertical-align:middle;width:10vw;' step='0.01' min='0.5' max='736.91' type='range' value='0'>
+    <span id='distVal'>0</span><br>
+
+    Black Hole mass (log(Solar Mass)) greater than:
+    <input id='slider2' style='vertical-align:middle;width:10vw;' step='0.01' min='1.5' max='10.32' type='range' value='0'>
+    <span id='bhmassVal'>0</span><br>
+
+<script>
+    document.querySelector('#upload-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(event.target);
+
+    document.getElementById('loading').style.display = 'block';  // Show loading indicator
+
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loading').style.display = 'none';  // Hide loading indicator
+        if (data.error) {
+            alert(data.error);
+        } else {
+            updateMap(data);
+            createHistogram(data.map(d => d.property)); // Update this with actual property names
+        }
+    })
+    .catch(error => {
+        document.getElementById('loading').style.display = 'none';
+        alert('Error processing data: ' + error.message);
+    });
+    });
+
+    function updateMap(data) {
+        var userCatalog = A.catalog({name: 'User Data', sourceSize: 12, color: 'red'});
+    data.forEach(d => {
+        userCatalog.addSources([A.source(parseFloat(d.ra), parseFloat(d.dec), {popupTitle: d.name})]);
+    });
+    aladin.addCatalog(userCatalog);
+    }
+    function updateCatalogDisplay() {
+    const catalogDataElement = document.getElementById('catalogData');
+    const catalogs = aladin.getCatalogs();
+    if (catalogs.length === 0) {
+        catalogDataElement.textContent = 'No catalogs loaded.';
+        return;
+    }
+
+    let displayText = '';
+    catalogs.forEach((catalog, index) => {
+        displayText += `Catalog ${index}: Number of sources - ${catalog.sources.length}\n`;
+        if (catalog.sources.length > 0) {
+            displayText += 'Sample source data: ' + JSON.stringify(catalog.sources[0], null, 2) + '\n\n';
+        }
+    });
+
+    catalogDataElement.textContent = displayText;
+}
+
+// Call this function to update the display after catalogs are loaded or changed
+//updateCatalogDisplay();
+
+
+
+document.getElementById('upload-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission behavior
+
+    const fileInput = document.querySelector('input[type="file"]');
+    const file = fileInput.files[0];  // Ensure you are correctly referencing the file input
+    if (file && file.type === "text/xml") {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const xmlText = e.target.result;
+            const parsedData = parseVOTable(xmlText);
+            // Assuming you want to plot histograms based on two data types
+            createHistogram(parsedData.distances, parsedData.mass, 'Frequency');
+        };
+        reader.readAsText(file);  // Start reading the file as Text
+    } else {
+        alert("Please upload a valid XML file.");
+    }
+});
+
+function parseVOTable(xmlText) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+    const rows = xmlDoc.querySelectorAll("TABLEDATA TR");
+    let distances = [];
+    let masses = [];
+    rows.forEach(row => {
+        distances.push(parseFloat(row.children[1].textContent)); // Assume 'dist' is in the second column
+        masses.push(parseFloat(row.children[2].textContent)); // Assume 'mass' is in the third column
+    });
+    return { distances, masses };
+}
+}
+
+function createHistogram(data, yAxis, xAxis) {
+    const trace1 = {
+        x: distances,
+        type: 'histogram',
+        opacity: 0.5,
+        name: 'Distances'
+    };
+
+    const trace2 = {
+        x: masses,
+        type: 'histogram',
+        opacity: 0.5,
+        name: 'Masses'
+    };
+
+    const layout = {
+        title: 'Combined Histogram of Distances and Masses',
+        barmode: 'overlay', // Allows histograms to overlap
+        xaxis: { title: 'Value' },
+        yaxis: { title: yAxis }
+    };
+
+    Plotly.newPlot('histogram', [trace1, trace2], layout);
+}
+
+document.getElementById('xAxisSelect').addEventListener('change', function() {
+    const selectedValue = this.value;
+    // Call createHistogram with the selected value
+    createHistogram(data, 'frequency', selectedValue);
+});
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+    margin-top: 56px; /* To avoid overlap with the fixed navbar */
+  }
+  
+  /* Navbar Styles */
+  #mainNav {
+    background-color: #343a40;
+    padding: 0.5rem 1rem; /* Adjust padding to make the header thinner */
+    height: 55px; /* Optionally set a fixed height */
+    z-index: 1;
+    }
+  
+  #mainNav .navbar-nav .nav-link {
+    color: #f8f9fa;
+    padding: 0.25rem 0.5rem; /* Adjust padding for navbar links */
+  }
+  
+  #mainNav .navbar-nav .nav-link:hover {
+    color: #FFA500;
+  }
+  
+  /* Header */
+  header {
+    margin-bottom: 2rem;
+    visibility=visible;
+  }
+  
+  /* Container */
+  .container-fluid {
+    max-width: 1200px;
+    margin: auto;
+    padding-top: 20px;
+    z-index: 1;
+  }
+  
+  .display-5 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  /* Flexbox Layout for Main Content */
+  .main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: calc(100vh - 150px); /* Adjust based on header and other content */
+    overflow: hidden;
+  }
+  
+  /* Aladin Lite Container */
+  #aladin-lite-div {
+    flex: 1;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  /* Histogram Section */
+  .histogram {
+    width: 35%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-left: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+   
+  }
+  
+  .dropdown-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  #data-type {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  #histogram {
+    flex-grow: 1;
+    height: auto; /* Ensure histogram takes up remaining space */
+  }
+  
+  /* Form Styles */
+  form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  form input[type="file"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  form input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  form input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Loading Indicator */
+  #loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #007bff;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #aladin-lite-div,
+    .histogram {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .histogram {
+        margin-top: 20px;
+    }
+    
+    form {
+        padding: 10px;
+    }
+  }
+  
